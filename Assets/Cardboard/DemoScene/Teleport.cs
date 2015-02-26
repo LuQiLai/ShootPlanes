@@ -11,41 +11,68 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Collider))]
-public class Teleport : MonoBehaviour {
-  private CardboardHead head;
-  private Vector3 startingPosition;
+public class Teleport : MonoBehaviour
+{
+	private CardboardHead head;
+	private Vector3 startingPosition;
 
-  void Start() {
-    head = Camera.main.GetComponent<StereoController>().Head;
-    startingPosition = transform.localPosition;
-    CardboardGUI.IsGUIVisible = true;
-    CardboardGUI.onGUICallback += this.OnGUI;
-  }
+	//counter for locking
+	private int counter;  
 
-  void Update() {
-    RaycastHit hit;
-    bool isLookedAt = GetComponent<Collider>().Raycast(head.Gaze, out hit, Mathf.Infinity);
-    GetComponent<Renderer>().material.color = isLookedAt ? Color.blue : Color.red;
-    if (Cardboard.SDK.CardboardTriggered && isLookedAt) {
-      // Teleport randomly.
-      Vector3 direction = Random.onUnitSphere;
-      direction.y = Mathf.Clamp(direction.y, 0.5f, 1f);
-      float distance = 2 * Random.value + 1.5f;
-      transform.localPosition = direction * distance;
-    }
-  }
+	//reocord the total time passed
+	private int timer;
 
-  void OnGUI() {
-    if (!CardboardGUI.OKToDraw(this)) {
-      return;
-    }
-    if (GUI.Button(new Rect(50, 50, 200, 50), "Reset")) {
-      transform.localPosition = startingPosition;
-    }
-  }
+	//record the score
+	public int score;
+
+	void Start ()
+	{
+		//initialize
+		counter = 0;
+		score = 0;
+		timer = 0;
+
+		head = Camera.main.GetComponent<StereoController> ().Head;
+		startingPosition = transform.localPosition;
+		CardboardGUI.IsGUIVisible = true;
+		CardboardGUI.onGUICallback += this.OnGUI;
+	}
+
+	void Update ()
+	{
+		RaycastHit hit;
+		bool isLookedAt = GetComponent<Collider> ().Raycast (head.Gaze, out hit, Mathf.Infinity);
+		GetComponent<Renderer> ().material.color = isLookedAt ? Color.blue : Color.red;
+		if (isLookedAt) {
+			if (counter >= 100) {
+				counter = 0;
+				score += 100;
+				GetComponent<Renderer> ().material.color = Color.green;
+				// Teleport randomly.
+				Vector3 direction = Random.onUnitSphere;
+				direction.y = Mathf.Clamp (direction.y, 0.5f, 1f);
+				float distance = 2 * Random.value + 1.5f;
+				transform.localPosition = direction * distance;
+			} else
+				counter++;		
+		} else
+			counter = 0;
+		timer++;
+	}
+
+	void OnGUI ()
+	{
+		if (!CardboardGUI.OKToDraw (this)) {
+			return;
+		}
+		if (GUI.Button (new Rect (50, 50, 200, 50), "Reset")) {
+			transform.localPosition = startingPosition;
+		}
+	}
+	
+
 }
