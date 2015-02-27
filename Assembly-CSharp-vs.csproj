@@ -59,6 +59,7 @@
      <Compile Include="Assets\Cardboard\Scripts\StereoController.cs" />
      <Compile Include="Assets\Cardboard\Scripts\StereoLensFlare.cs" />
      <None Include="Assets\Cardboard\Resources\SkyboxMesh.shader" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Cardboard\Resources\GUIScreen.shader" />
      <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
  <Reference Include="UnityEngine.UI">
