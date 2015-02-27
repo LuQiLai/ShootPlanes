@@ -6,6 +6,7 @@ public class autoMovePlane : MonoBehaviour
 	private Vector3 startingPosition;
 	private int counter;
 	private bool ifrotate;
+	private Vector3 lastRotate;
 
 	private int xflag;
 	private int yflag;
@@ -22,6 +23,7 @@ public class autoMovePlane : MonoBehaviour
 		startingPosition = transform.localPosition;	
 		counter = 0;
 		ifrotate = false;
+
 		xflag = yflag = zflag = 0;
 		if (Random.value * 10 >= 6)
 			xflag = 1;
@@ -59,6 +61,8 @@ public class autoMovePlane : MonoBehaviour
 			if (Random.value * 10 >= 4)
 				zflag = 1;
 			else zflag = 0;
+			ifrotate = false;
+			transform.Rotate(lastRotate*(-1));
 		}
 
 		//Auto move the cube
@@ -68,10 +72,13 @@ public class autoMovePlane : MonoBehaviour
 		if (!ifrotate) {
 			Vector3 rotatedir;
 			rotatedir.x = 0;
-			rotatedir.y = - Mathf.Atan(direction.x/direction.z)*180/Mathf.PI;
+			if(direction.z >= 0)
+				rotatedir.y = Mathf.Atan(direction.x/direction.z)*180/Mathf.PI;
+			else rotatedir.y = 180 + Mathf.Atan(direction.x/direction.z)*180/Mathf.PI;
 			rotatedir.z = 0 ;
 			transform.Rotate(rotatedir);
 			ifrotate = true;
+			lastRotate = rotatedir;
 		}
 		float distance = 0.05f;
 		transform.localPosition += direction * distance;
